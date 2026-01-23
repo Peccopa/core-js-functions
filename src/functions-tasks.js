@@ -157,31 +157,15 @@ function retry(func, attempts) {
   };
 }
 
-/**
- * Returns the logging wrapper for the specified method,
- * Logger has to log the start and end of calling the specified function.
- * Logger has to log the arguments of invoked function.
- * The format of output log is:
- * <function name>(<arg1>, <arg2>,...,<argN>) starts
- * <function name>(<arg1>, <arg2>,...,<argN>) ends
- *
- *
- * @param {Function} func
- * @param {Function} logFunc - function to output log with single string argument
- * @return {Function}
- *
- * @example
- *
- * const cosLogger = logger(Math.cos, console.log);
- * const result = cosLogger(Math.PI));     // -1
- *
- * log from console.log:
- * cos(3.141592653589793) starts
- * cos(3.141592653589793) ends
- *
- */
-function logger(/* func, logFunc */) {
-  throw new Error('Not implemented');
+function logger(func, logFunc) {
+  return function wrapper(...args) {
+    const argsStr = args.map((a) => JSON.stringify(a)).join(',');
+    logFunc(`${func.name}(${argsStr}) starts`);
+    const result = func.apply(this, args);
+    logFunc(`${func.name}(${argsStr}) ends`);
+
+    return result;
+  };
 }
 
 /**
